@@ -85,7 +85,6 @@ class BaseRepository
     {
 
         return $this->model->where('slug', $slug)->first();
-
     }
 
     /**
@@ -195,11 +194,9 @@ class BaseRepository
         }
 
         if ($validator->fails()) {
-            return false;
             throw (new ValidationException)->setValidator($validator);
         }
 
         return true;
     }
-
 }
