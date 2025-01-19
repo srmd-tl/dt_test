@@ -6,8 +6,10 @@ use Validator;
 use Illuminate\Database\Eloquent\Model;
 use DTApi\Exceptions\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Validation\Validator as ValidationValidator;
 
-class BaseRepository
+abstract class BaseRepository
 {
 
     /**
@@ -77,13 +79,13 @@ class BaseRepository
     }
 
     /**
+     * Find a model by slug
+     * 
      * @param string $slug
-     * @return Model
-     * @throws ModelNotFoundException
+     * @return Model|null 
      */
-    public function findBySlug($slug)
+    public function findBySlug(string $slug): ?Model
     {
-
         return $this->model->where('slug', $slug)->first();
     }
 
@@ -137,13 +139,13 @@ class BaseRepository
 
     /**
      * @param array $data
-     * @param null $rules
+     * @param array|null $rules
      * @param array $messages
      * @param array $customAttributes
      * @return bool
      * @throws ValidationException
      */
-    public function validate(array $data = [], $rules = null, array $messages = [], array $customAttributes = [])
+    public function validate(array $data = [], ?array $rules = null, array $messages = [], array $customAttributes = []): bool
     {
         $validator = $this->validator($data, $rules, $messages, $customAttributes);
         return $this->_validate($validator);
@@ -183,11 +185,11 @@ class BaseRepository
     }
 
     /**
-     * @param \Illuminate\Validation\Validator $validator
+     * @param ValidationValidator $validator
      * @return bool
      * @throws ValidationException
      */
-    protected function _validate(\Illuminate\Validation\Validator $validator)
+    protected function _validate(ValidationValidator $validator): bool
     {
         if (!empty($attributeNames = $this->validatorAttributeNames())) {
             $validator->setAttributeNames($attributeNames);
